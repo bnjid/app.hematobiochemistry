@@ -22,31 +22,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-XSN0M1W9R8">
-const preQuestions=[
-{q:'Antigen pada sistem ABO ditemukan pada permukaan eritrosit.',a:true},
-{q:'Antibodi merupakan komponen yang mengenali antigen secara spesifik.',a:true},
-{q:'Golongan darah A memiliki antigen B pada permukaan eritrosit.',a:false},
-{q:'Golongan darah AB memiliki antigen A dan antigen B.',a:true},
-{q:'Golongan darah O memiliki antigen A dan B sekaligus.',a:false},
-{q:'Aglutinasi merupakan penggumpalan eritrosit akibat reaksi antigen–antibodi.',a:true},
-{q:'Antigen D merupakan salah satu antigen penting dalam sistem Rhesus.',a:true},
-{q:'LED mengukur kecepatan pengendapan eritrosit dalam periode satu jam.',a:true},
-{q:'Pada pemeriksaan Westergren, pipet harus diletakkan dalam posisi vertikal.',a:true},
-{q:'LED merupakan pemeriksaan yang spesifik untuk memastikan satu diagnosis penyakit.',a:false}
-];
-let preAnswers=Array(10).fill(null),preIndex=0,preActive=false;
-const preOptions=[...document.querySelectorAll('[data-preanswer]')];
-function renderPre(){document.getElementById('preCounter').textContent='Soal '+(preIndex+1)+' dari 10';document.getElementById('preQuestion').textContent=preQuestions[preIndex].q;document.getElementById('preProgress').style.width=((preIndex+1)*10)+'%';preOptions.forEach(b=>b.classList.toggle('selected',preAnswers[preIndex]=== (b.dataset.preanswer==='true')));document.getElementById('preStatus').textContent=preAnswers[preIndex]===null?'Pilih satu jawaban.':'Jawaban tersimpan: '+(preAnswers[preIndex]?'Benar':'Salah');document.getElementById('prePrev').disabled=preIndex===0;document.getElementById('preNext').textContent=preIndex===9?'Selesai & Lihat Hasil':'Berikutnya →';}
-function beginPre(){preAnswers=Array(10).fill(null);preIndex=0;preActive=true;document.getElementById('preResult').classList.add('hidden');document.getElementById('preStage').classList.remove('hidden');renderPre();if(typeof gtag==='function')gtag('event','quiz_start',{quiz_name:'Hematoimunologi Pre-Test'});}
-document.getElementById('startPretest').addEventListener('click',beginPre);
-preOptions.forEach(b=>b.addEventListener('click',()=>{if(!preActive)return;preAnswers[preIndex]=b.dataset.preanswer==='true';renderPre();}));
-document.getElementById('prePrev').addEventListener('click',()=>{if(preIndex>0){preIndex--;renderPre()}});
-document.getElementById('preNext').addEventListener('click',()=>{if(preIndex<9){preIndex++;renderPre()}else finishPre();});
-function finishPre(){preActive=false;const n=preQuestions.filter((q,i)=>preAnswers[i]===q.a).length,score=n*10;document.getElementById('preStage').classList.add('hidden');document.getElementById('preResult').classList.remove('hidden');document.getElementById('preScore').textContent=score;document.getElementById('preScoreRing').style.setProperty('--deg',score+'%');document.getElementById('preCorrect').textContent=n;document.getElementById('preWrong').textContent=10-n;const name=document.getElementById('preStudentName').value.trim();document.getElementById('preResultText').textContent=(name?name+', ':'')+'Anda menjawab '+n+' dari 10 pernyataan dengan benar. Skor ini menggambarkan pengetahuan awal sebelum pembelajaran.';if(typeof gtag==='function')gtag('event','quiz_complete',{quiz_name:'Hematoimunologi Pre-Test',score:score,correct:n});}
-document.getElementById('preRetry').addEventListener('click',beginPre);
-document.getElementById('preToLessons').addEventListener('click',()=>showPage('materi'));
-document.getElementById('unlockPost').addEventListener('click',()=>{const code=document.getElementById('postPasscode').value;if(code==='119900'){document.getElementById('postLock').classList.add('hidden');document.getElementById('postQuizConfig').classList.remove('hidden');document.getElementById('lockMessage').textContent='';document.getElementById('postPasscode').value='';if(typeof gtag==='function')gtag('event','posttest_unlocked');}else{document.getElementById('lockMessage').textContent='Kode akses tidak sesuai. Silakan periksa kembali kode dari pengajar.';document.getElementById('postPasscode').select();}});
-document.getElementById('postPasscode').addEventListener('keydown',e=>{if(e.key==='Enter')document.getElementById('unlockPost').click()});
+
 </script>
 <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag('js',new Date());gtag('config','G-XSN0M1W9R8');</script>
 <style>
@@ -196,5 +172,32 @@ document.getElementById('nextQ').addEventListener('click',()=>{if(current<questi
 function finishQuiz(){if(!started)return;stopTimer();started=false;const correct=questions.filter((q,i)=>answers[i]===q.a).length,score=correct*10;document.getElementById('quizStage').classList.add('hidden');document.getElementById('quizResult').classList.remove('hidden');document.getElementById('scoreValue').textContent=score;document.getElementById('scoreRing').style.setProperty('--deg',score+'%');document.getElementById('correctNum').textContent=correct;document.getElementById('wrongNum').textContent=10-correct;document.getElementById('totalNum').textContent='10';document.getElementById('resultIcon').textContent=score>=80?'🏆':score>=60?'👏':'📚';document.getElementById('resultTitle').textContent=score>=80?'Sangat baik!':score>=60?'Terus tingkatkan!':'Mari pelajari kembali';document.getElementById('resultText').textContent=(document.getElementById('studentName').value.trim()?document.getElementById('studentName').value.trim()+', ':'')+'Anda menjawab '+correct+' dari 10 soal dengan benar. Nilai dihitung 10 poin untuk setiap jawaban benar.';document.getElementById('answerReview').innerHTML=questions.map((q,i)=>'<article class="review"><h4>Soal '+(i+1)+' · '+(answers[i]===q.a?'✓ Benar':'✕ Salah')+'</h4><p>'+q.q+'</p><p><b>Kunci: '+(q.a?'BENAR':'SALAH')+'</b> — '+q.e+'</p></article>').join('');if(typeof gtag==='function')gtag('event','quiz_complete',{score:score,correct:correct});document.getElementById('quizResult').scrollIntoView({behavior:'smooth',block:'start'});}
 document.getElementById('retryQuiz').addEventListener('click',beginQuiz);
 document.getElementById('printResult').addEventListener('click',()=>window.print());
+</script>
+<script>
+const preQuestions=[
+{q:'Antigen pada sistem ABO ditemukan pada permukaan eritrosit.',a:true},
+{q:'Antibodi merupakan komponen yang mengenali antigen secara spesifik.',a:true},
+{q:'Golongan darah A memiliki antigen B pada permukaan eritrosit.',a:false},
+{q:'Golongan darah AB memiliki antigen A dan antigen B.',a:true},
+{q:'Golongan darah O memiliki antigen A dan B sekaligus.',a:false},
+{q:'Aglutinasi merupakan penggumpalan eritrosit akibat reaksi antigen–antibodi.',a:true},
+{q:'Antigen D merupakan salah satu antigen penting dalam sistem Rhesus.',a:true},
+{q:'LED mengukur kecepatan pengendapan eritrosit dalam periode satu jam.',a:true},
+{q:'Pada pemeriksaan Westergren, pipet harus diletakkan dalam posisi vertikal.',a:true},
+{q:'LED merupakan pemeriksaan yang spesifik untuk memastikan satu diagnosis penyakit.',a:false}
+];
+let preAnswers=Array(10).fill(null),preIndex=0,preActive=false;
+const preOptions=[...document.querySelectorAll('[data-preanswer]')];
+function renderPre(){document.getElementById('preCounter').textContent='Soal '+(preIndex+1)+' dari 10';document.getElementById('preQuestion').textContent=preQuestions[preIndex].q;document.getElementById('preProgress').style.width=((preIndex+1)*10)+'%';preOptions.forEach(b=>b.classList.toggle('selected',preAnswers[preIndex]=== (b.dataset.preanswer==='true')));document.getElementById('preStatus').textContent=preAnswers[preIndex]===null?'Pilih satu jawaban.':'Jawaban tersimpan: '+(preAnswers[preIndex]?'Benar':'Salah');document.getElementById('prePrev').disabled=preIndex===0;document.getElementById('preNext').textContent=preIndex===9?'Selesai & Lihat Hasil':'Berikutnya →';}
+function beginPre(){preAnswers=Array(10).fill(null);preIndex=0;preActive=true;document.getElementById('preResult').classList.add('hidden');document.getElementById('preStage').classList.remove('hidden');renderPre();if(typeof gtag==='function')gtag('event','quiz_start',{quiz_name:'Hematoimunologi Pre-Test'});}
+document.getElementById('startPretest').addEventListener('click',beginPre);
+preOptions.forEach(b=>b.addEventListener('click',()=>{if(!preActive)return;preAnswers[preIndex]=b.dataset.preanswer==='true';renderPre();}));
+document.getElementById('prePrev').addEventListener('click',()=>{if(preIndex>0){preIndex--;renderPre()}});
+document.getElementById('preNext').addEventListener('click',()=>{if(preIndex<9){preIndex++;renderPre()}else finishPre();});
+function finishPre(){preActive=false;const n=preQuestions.filter((q,i)=>preAnswers[i]===q.a).length,score=n*10;document.getElementById('preStage').classList.add('hidden');document.getElementById('preResult').classList.remove('hidden');document.getElementById('preScore').textContent=score;document.getElementById('preScoreRing').style.setProperty('--deg',score+'%');document.getElementById('preCorrect').textContent=n;document.getElementById('preWrong').textContent=10-n;const name=document.getElementById('preStudentName').value.trim();document.getElementById('preResultText').textContent=(name?name+', ':'')+'Anda menjawab '+n+' dari 10 pernyataan dengan benar. Skor ini menggambarkan pengetahuan awal sebelum pembelajaran.';if(typeof gtag==='function')gtag('event','quiz_complete',{quiz_name:'Hematoimunologi Pre-Test',score:score,correct:n});}
+document.getElementById('preRetry').addEventListener('click',beginPre);
+document.getElementById('preToLessons').addEventListener('click',()=>showPage('materi'));
+document.getElementById('unlockPost').addEventListener('click',()=>{const code=document.getElementById('postPasscode').value;if(code==='119900'){document.getElementById('postLock').classList.add('hidden');document.getElementById('postQuizConfig').classList.remove('hidden');document.getElementById('lockMessage').textContent='';document.getElementById('postPasscode').value='';if(typeof gtag==='function')gtag('event','posttest_unlocked');}else{document.getElementById('lockMessage').textContent='Kode akses tidak sesuai. Silakan periksa kembali kode dari pengajar.';document.getElementById('postPasscode').select();}});
+document.getElementById('postPasscode').addEventListener('keydown',e=>{if(e.key==='Enter')document.getElementById('unlockPost').click()});
 </script>
 </body></html>
