@@ -129,7 +129,7 @@ main{max-width:1180px;margin:auto;padding:22px 20px 60px}.page{display:none}.pag
 <section id="quiz" class="page">
 <div class="panel"><div class="section-head"><div><h2>Post-Test Hematoimunologi</h2><p class="sub">10 soal Benar–Salah setelah praktikum golongan darah dan LED.</p></div><span class="pill">TRUE / FALSE CHALLENGE</span></div>
 <div id="postLock" class="quiz-config"><div><div style="font-size:30px">🔐</div><h3>Post-Test terkunci</h3><p>Post-test hanya dapat dibuka menggunakan kode akses yang diberikan oleh pengajar. Silakan ikuti pre-test dan pelajari materi terlebih dahulu.</p></div><div class="config-fields"><label for="postPasscode">Kode akses pengajar</label><input id="postPasscode" type="password" inputmode="numeric" autocomplete="off" placeholder="Masukkan kode akses"><button class="btn primary" id="unlockPost">Buka Post-Test →</button><p id="lockMessage" style="font-size:11px;color:#b33;margin:5px 0 0" aria-live="polite"></p></div></div><div class="quiz-config hidden" id="postQuizConfig"><div><div style="font-size:30px">🧠</div><h3>Uji pemahaman Anda</h3><p>Jawab seluruh pernyataan berdasarkan prinsip pemeriksaan, interpretasi reaksi aglutinasi, dan prosedur LED. Setiap soal dilengkapi pembahasan setelah tes selesai.</p><div style="display:flex;gap:12px;flex-wrap:wrap;font-size:12px;color:#d9e9ee"><span>✓ 10 soal</span><span>✓ Koreksi otomatis</span><span>✓ Pembahasan</span></div></div><div class="config-fields"><label for="studentName">Nama mahasiswa (opsional)</label><input id="studentName" maxlength="60" placeholder="Masukkan nama"><button class="btn primary" id="startQuiz">Mulai Post-Test →</button><p style="font-size:11px;color:var(--muted);margin:4px 0 0">Kode akses diperlukan untuk membuka post-test. Pilihan jawaban dinilai setelah tombol selesai ditekan.</p></div></div>
-<div id="quizStage" class="quiz-stage hidden"><div class="quiz-top"><div><span class="pill">POST-TEST</span><div id="qCounter" style="font-weight:800;margin-top:8px">Soal 1 dari 10</div></div><div class="timer" id="timer"><b id="timerText">00:00</b></div></div><div class="progress"><span id="progressBar"></span></div><div id="questionText" class="question"></div><div class="tf-options"><button data-answer="true">✓ BENAR</button><button data-answer="false">✕ SALAH</button></div><div class="quiz-bottom"><span id="answerStatus" class="sub">Pilih satu jawaban.</span><div style="display:flex;gap:8px"><button class="btn light" id="prevQ">← Sebelumnya</button><button class="btn primary" id="nextQ">Berikutnya →</button></div></div></div>
+<div id="quizStage" class="quiz-stage hidden"><div class="quiz-top"><div><span class="pill">POST-TEST · 10 SOAL ACAK DARI 100</span><div id="qCounter" style="font-weight:800;margin-top:8px">Soal 1 dari 10</div></div><div style="display:flex;gap:10px;align-items:center"><div style="text-align:center"><div class="timer" id="questionTimer"><b id="questionTimerValue">15</b></div><small class="sub">Sisa detik</small></div><div style="text-align:center"><div class="timer" id="timer"><b id="timerText">00:00</b></div><small class="sub">Waktu total</small></div></div></div><div class="progress"><span id="progressBar"></span></div><div id="questionText" class="question"></div><div class="tf-options"><button data-answer="true">✓ BENAR</button><button data-answer="false">✕ SALAH</button></div><div class="quiz-bottom"><span id="answerStatus" class="sub">Pilih jawaban. Soal berikutnya akan terbuka otomatis.</span><span class="sub">15 detik per soal</span></div></div>
 <div id="quizResult" class="result hidden"><div style="font-size:42px" id="resultIcon">🏆</div><span class="pill">HASIL POST-TEST</span><h2 id="resultTitle" style="font:800 28px 'Plus Jakarta Sans'">Post-test selesai</h2><div class="score" id="scoreRing"><strong id="scoreValue">0</strong></div><p id="resultText" style="color:var(--muted)"></p><div class="grid3"><div class="card"><h3 id="correctNum" style="color:var(--green);font-size:24px">0</h3><p>Benar</p></div><div class="card"><h3 id="wrongNum" style="color:var(--red);font-size:24px">0</h3><p>Salah</p></div><div class="card"><h3 id="totalNum" style="font-size:24px">10</h3><p>Total soal</p></div></div><div id="answerReview" style="text-align:left;margin-top:18px"></div><div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:18px"><button class="btn primary" id="retryQuiz">Ulangi Post-Test</button><button class="btn light" id="printResult">Cetak hasil</button></div></div>
 </div>
 </section>
@@ -147,31 +147,128 @@ document.querySelectorAll('.sample').forEach(btn=>btn.addEventListener('click',(
 let ledSex='male';document.querySelectorAll('.sex').forEach(b=>b.addEventListener('click',()=>{ledSex=b.dataset.sex;document.querySelectorAll('.sex').forEach(x=>x.classList.remove('gold'));b.classList.add('gold');interpretLed()}));
 function interpretLed(){const n=Number(document.getElementById('ledValue').value);const el=document.getElementById('ledResult');if(!Number.isFinite(n)||n<0){el.textContent='Masukkan nilai LED yang valid.';return}const limit=ledSex==='male'?10:15;el.textContent='Hasil: '+n+' mm/jam — '+(n<=limit?'dalam rentang nilai rujukan praktikum yang dicantumkan.':'di atas rentang nilai rujukan praktikum yang dicantumkan.')+' ('+(ledSex==='male'?'laki-laki 0–10':'perempuan 0–15')+' mm/jam).';}
 document.getElementById('readLed').addEventListener('click',interpretLed);
-const questions=[
-{q:'Aglutinasi pada pemeriksaan golongan darah terjadi akibat reaksi spesifik antara antigen pada permukaan eritrosit dan antibodi yang sesuai.',a:true,e:'Aglutinasi terjadi ketika antigen eritrosit bereaksi dengan antibodi homolog sehingga terbentuk penggumpalan eritrosit.'},
-{q:'Seseorang dengan golongan darah A akan menunjukkan aglutinasi dengan reagen Anti-B, tetapi tidak dengan Anti-A.',a:false,e:'Golongan darah A memiliki antigen A sehingga bereaksi dengan Anti-A, bukan Anti-B.'},
-{q:'Sampel yang menunjukkan aglutinasi dengan Anti-A, Anti-B, dan Anti-AB dapat diinterpretasikan sebagai golongan darah AB.',a:true,e:'Eritrosit golongan AB memiliki antigen A dan B sehingga bereaksi dengan ketiga reagen tersebut.'},
-{q:'Eritrosit individu dengan golongan darah O memiliki antigen A dan B pada permukaan membrannya.',a:false,e:'Golongan darah O tidak memiliki antigen A maupun B pada permukaan eritrosit.'},
-{q:'Reaksi aglutinasi dalam pemeriksaan golongan darah menunjukkan interaksi antigen–antibodi yang bersifat spesifik.',a:true,e:'Antibodi mengenali antigen yang sesuai pada permukaan eritrosit dan membentuk aglutinasi.'},
-{q:'LED diukur berdasarkan tinggi lapisan plasma jernih di atas eritrosit yang mengendap setelah satu jam.',a:true,e:'Pembacaan LED adalah tinggi kolom plasma jernih setelah satu jam, dinyatakan dalam mm/jam.'},
-{q:'Pada metode Westergren dalam penuntun praktikum, darah vena dicampurkan dengan natrium sitrat 3,8% sebagai antikoagulan.',a:true,e:'Natrium sitrat 3,8% digunakan sebagai antikoagulan pada prosedur Westergren yang tercantum dalam penuntun.'},
-{q:'Pipet Westergren harus dipasang miring agar pengendapan eritrosit berlangsung lebih cepat.',a:false,e:'Pipet harus dipasang vertikal atau tegak lurus. Posisi miring dapat memengaruhi hasil pemeriksaan.'},
-{q:'Peningkatan fibrinogen dapat meningkatkan LED karena mendorong pembentukan rouleaux sehingga eritrosit lebih mudah mengendap.',a:true,e:'Fibrinogen dapat meningkatkan kecenderungan eritrosit membentuk agregat rouleaux yang mempercepat sedimentasi.'},
-{q:'Peningkatan LED merupakan indikator spesifik untuk mendiagnosis satu jenis penyakit infeksi sehingga tidak memerlukan pemeriksaan lain.',a:false,e:'LED merupakan indikator inflamasi yang tidak spesifik. Hasilnya harus diinterpretasikan bersama temuan klinis dan pemeriksaan lain.'}
+const questionBank=[
+{q:"Aglutinasi pada pemeriksaan golongan darah terjadi akibat reaksi spesifik antara antigen pada permukaan eritrosit dan antibodi yang sesuai.",a:true,e:"Antigen eritrosit bereaksi dengan antibodi homolog sehingga terjadi penggumpalan."},
+{q:"Seseorang dengan golongan darah A akan menunjukkan aglutinasi dengan Anti-B, tetapi tidak dengan Anti-A.",a:false,e:"Golongan A memiliki antigen A sehingga bereaksi dengan Anti-A."},
+{q:"Sampel yang bereaksi dengan Anti-A, Anti-B, dan Anti-AB dapat diinterpretasikan sebagai golongan AB.",a:true,e:"Eritrosit AB memiliki antigen A dan B."},
+{q:"Eritrosit golongan O memiliki antigen A dan B pada permukaannya.",a:false,e:"Golongan O tidak memiliki antigen A maupun B."},
+{q:"Aglutinasi menunjukkan interaksi antigen–antibodi yang spesifik.",a:true,e:"Antibodi mengenali antigen yang sesuai."},
+{q:"LED dibaca berdasarkan tinggi plasma jernih di atas eritrosit setelah satu jam.",a:true,e:"Hasil dilaporkan sebagai mm/jam."},
+{q:"Westergren menggunakan natrium sitrat 3,8% sebagai antikoagulan menurut penuntun.",a:true,e:"Natrium sitrat 3,8% disebut pada prosedur praktikum."},
+{q:"Pipet Westergren harus dipasang miring.",a:false,e:"Pipet dipasang vertikal."},
+{q:"Fibrinogen dapat meningkatkan LED melalui pembentukan rouleaux.",a:true,e:"Rouleaux mempercepat sedimentasi."},
+{q:"LED merupakan indikator spesifik untuk mendiagnosis satu penyakit.",a:false,e:"LED adalah penanda inflamasi tidak spesifik."},
+{q:"Anti-A mengenali antigen A pada eritrosit.",a:true,e:"Anti-A bereaksi spesifik dengan antigen A."},
+{q:"Anti-A mengenali antigen B pada eritrosit.",a:false,e:"Anti-A bereaksi spesifik dengan antigen A."},
+{q:"Anti-B mengenali antigen B pada eritrosit.",a:true,e:"Anti-B bereaksi spesifik dengan antigen B."},
+{q:"Anti-B mengenali antigen A pada eritrosit.",a:false,e:"Anti-B bereaksi spesifik dengan antigen B."},
+{q:"Anti-AB dapat bereaksi dengan eritrosit yang memiliki antigen A atau B.",a:true,e:"Anti-AB mendeteksi antigen A dan/atau B."},
+{q:"Anti-AB hanya bereaksi dengan eritrosit tanpa antigen A dan B.",a:false,e:"Anti-AB mendeteksi antigen A dan/atau B."},
+{q:"Golongan darah A memiliki antigen A pada eritrosit.",a:true,e:"Golongan A mengekspresikan antigen A."},
+{q:"Golongan darah A memiliki antigen B saja pada eritrosit.",a:false,e:"Golongan A mengekspresikan antigen A."},
+{q:"Golongan darah B memiliki antigen B pada eritrosit.",a:true,e:"Golongan B mengekspresikan antigen B."},
+{q:"Golongan darah B memiliki antigen A saja pada eritrosit.",a:false,e:"Golongan B mengekspresikan antigen B."},
+{q:"Golongan darah AB memiliki antigen A dan B.",a:true,e:"Golongan AB mengekspresikan kedua antigen."},
+{q:"Golongan darah AB tidak memiliki antigen A maupun B.",a:false,e:"Golongan AB mengekspresikan kedua antigen."},
+{q:"Golongan darah O tidak memiliki antigen A maupun B.",a:true,e:"Golongan O tidak mengekspresikan antigen A atau B."},
+{q:"Golongan darah O memiliki antigen A dan B sekaligus.",a:false,e:"Golongan O tidak mengekspresikan antigen A atau B."},
+{q:"Pola Anti-A positif dan Anti-B negatif sesuai dengan golongan A.",a:true,e:"Pola tersebut menunjukkan antigen A saja."},
+{q:"Pola Anti-A positif dan Anti-B negatif sesuai dengan golongan B.",a:false,e:"Pola tersebut menunjukkan antigen A saja."},
+{q:"Pola Anti-A negatif dan Anti-B positif sesuai dengan golongan B.",a:true,e:"Pola tersebut menunjukkan antigen B saja."},
+{q:"Pola Anti-A negatif dan Anti-B positif sesuai dengan golongan A.",a:false,e:"Pola tersebut menunjukkan antigen B saja."},
+{q:"Pola Anti-A dan Anti-B positif sesuai dengan golongan AB.",a:true,e:"Kedua antigen terdeteksi pada pola AB."},
+{q:"Pola Anti-A dan Anti-B positif sesuai dengan golongan O.",a:false,e:"Kedua antigen terdeteksi pada pola AB."},
+{q:"Pola Anti-A dan Anti-B negatif sesuai dengan golongan O.",a:true,e:"Kedua antigen tidak terdeteksi pada pola O."},
+{q:"Pola Anti-A dan Anti-B negatif sesuai dengan golongan AB.",a:false,e:"Kedua antigen tidak terdeteksi pada pola O."},
+{q:"Aglutinasi merupakan penggumpalan eritrosit akibat reaksi antigen–antibodi.",a:true,e:"Aglutinasi adalah penggumpalan, bukan lisis eritrosit."},
+{q:"Aglutinasi berarti eritrosit mengalami hemolisis.",a:false,e:"Aglutinasi adalah penggumpalan, bukan lisis eritrosit."},
+{q:"Reaksi antigen–antibodi pada penggolongan darah bersifat spesifik.",a:true,e:"Antibodi mengenali antigen yang sesuai."},
+{q:"Reaksi antigen–antibodi pada penggolongan darah bersifat acak.",a:false,e:"Antibodi mengenali antigen yang sesuai."},
+{q:"Hasil ABO dan Rhesus menilai sistem antigen yang berbeda.",a:true,e:"ABO dan Rh perlu dinilai sebagai sistem berbeda."},
+{q:"Pemeriksaan ABO sekaligus menetapkan status Rhesus.",a:false,e:"ABO dan Rh perlu dinilai sebagai sistem berbeda."},
+{q:"Anti-D digunakan untuk mendeteksi antigen D.",a:true,e:"Anti-D mengenali antigen D pada sistem Rh."},
+{q:"Anti-D digunakan untuk mendeteksi antigen A.",a:false,e:"Anti-D mengenali antigen D pada sistem Rh."},
+{q:"Rh positif menunjukkan keberadaan antigen D.",a:true,e:"Antigen D merupakan dasar penentuan Rh rutin."},
+{q:"Rh positif menunjukkan ketiadaan antigen D.",a:false,e:"Antigen D merupakan dasar penentuan Rh rutin."},
+{q:"Rh negatif berarti antigen D tidak terdeteksi pada pemeriksaan rutin.",a:true,e:"Rh negatif tidak menunjukkan antigen D pada pemeriksaan rutin."},
+{q:"Rh negatif berarti antigen D selalu sangat tinggi.",a:false,e:"Rh negatif tidak menunjukkan antigen D pada pemeriksaan rutin."},
+{q:"Ibu Rh negatif yang mengandung janin Rh positif dapat mengalami sensitisasi anti-D.",a:true,e:"Paparan antigen D janin dapat memicu respons imun maternal."},
+{q:"Ibu Rh positif dengan janin Rh negatif merupakan skenario klasik sensitisasi anti-D.",a:false,e:"Paparan antigen D janin dapat memicu respons imun maternal."},
+{q:"Paparan eritrosit Rh positif dapat memicu pembentukan anti-D pada individu Rh negatif.",a:true,e:"Paparan antigen D dapat menimbulkan sensitisasi."},
+{q:"Paparan eritrosit Rh positif tidak mungkin memicu respons imun pada individu Rh negatif.",a:false,e:"Paparan antigen D dapat menimbulkan sensitisasi."},
+{q:"LED adalah singkatan dari laju endap darah.",a:true,e:"LED menggambarkan erythrocyte sedimentation rate."},
+{q:"LED adalah singkatan dari laju eritrosit diferensial.",a:false,e:"LED menggambarkan erythrocyte sedimentation rate."},
+{q:"LED dilaporkan dalam satuan mm/jam.",a:true,e:"Satuan LED adalah milimeter per jam."},
+{q:"LED dilaporkan dalam satuan mg/dL.",a:false,e:"Satuan LED adalah milimeter per jam."},
+{q:"LED menilai jarak sedimentasi eritrosit dalam periode tertentu.",a:true,e:"LED menilai pengendapan eritrosit, bukan hitung leukosit."},
+{q:"LED mengukur jumlah leukosit per mikroliter.",a:false,e:"LED menilai pengendapan eritrosit, bukan hitung leukosit."},
+{q:"Pembacaan LED menilai tinggi plasma jernih di atas eritrosit yang mengendap.",a:true,e:"Batas plasma jernih dan eritrosit menjadi dasar pembacaan."},
+{q:"Pembacaan LED menilai tinggi lapisan leukosit.",a:false,e:"Batas plasma jernih dan eritrosit menjadi dasar pembacaan."},
+{q:"Prosedur Westergren dalam penuntun dibaca setelah satu jam.",a:true,e:"Waktu pembacaan yang digunakan adalah 60 menit."},
+{q:"Prosedur Westergren dalam penuntun dibaca setelah lima menit.",a:false,e:"Waktu pembacaan yang digunakan adalah 60 menit."},
+{q:"Pipet Westergren dipasang dalam posisi vertikal.",a:true,e:"Posisi vertikal merupakan bagian penting prosedur."},
+{q:"Pipet Westergren dipasang miring untuk mempercepat sedimentasi.",a:false,e:"Posisi vertikal merupakan bagian penting prosedur."},
+{q:"Getaran selama sedimentasi dapat memengaruhi hasil LED.",a:true,e:"Tabung perlu berada pada permukaan stabil."},
+{q:"Getaran selama sedimentasi tidak mungkin memengaruhi hasil LED.",a:false,e:"Tabung perlu berada pada permukaan stabil."},
+{q:"Gelembung udara dalam kolom sampel dapat mengganggu pembacaan LED.",a:true,e:"Kolom sampel harus bebas gangguan."},
+{q:"Gelembung udara selalu meningkatkan akurasi LED.",a:false,e:"Kolom sampel harus bebas gangguan."},
+{q:"Suhu lingkungan dapat memengaruhi sedimentasi eritrosit.",a:true,e:"Temperatur merupakan faktor teknis pemeriksaan."},
+{q:"Suhu lingkungan tidak pernah memengaruhi sedimentasi eritrosit.",a:false,e:"Temperatur merupakan faktor teknis pemeriksaan."},
+{q:"Waktu pembacaan LED harus distandarkan.",a:true,e:"Prosedur menggunakan waktu pembacaan yang ditetapkan."},
+{q:"Waktu pembacaan LED dapat diabaikan.",a:false,e:"Prosedur menggunakan waktu pembacaan yang ditetapkan."},
+{q:"Natrium sitrat 3,8% digunakan sebagai antikoagulan dalam prosedur Westergren pada penuntun.",a:true,e:"Natrium sitrat mencegah pembekuan sampel."},
+{q:"Natrium sitrat 3,8% digunakan untuk mempercepat pembekuan pada prosedur Westergren.",a:false,e:"Natrium sitrat mencegah pembekuan sampel."},
+{q:"Penuntun menyebut 0,5 mL natrium sitrat 3,8% dicampur dengan 2 mL darah vena.",a:true,e:"Rasio tersebut mengikuti prosedur dalam penuntun praktikum."},
+{q:"Penuntun menyebut 2 mL natrium sitrat 3,8% dicampur dengan 0,5 mL darah vena.",a:false,e:"Rasio tersebut mengikuti prosedur dalam penuntun praktikum."},
+{q:"Antikoagulan mencegah pembekuan sampel darah.",a:true,e:"Sampel harus tetap tidak membeku selama pemeriksaan."},
+{q:"Antikoagulan mempercepat pembekuan sampel darah.",a:false,e:"Sampel harus tetap tidak membeku selama pemeriksaan."},
+{q:"Rasio darah dan antikoagulan perlu mengikuti prosedur.",a:true,e:"Rasio yang tidak tepat dapat mengubah hasil pengukuran."},
+{q:"Rasio darah dan antikoagulan tidak memengaruhi hasil.",a:false,e:"Rasio yang tidak tepat dapat mengubah hasil pengukuran."},
+{q:"Sampel darah yang telah membeku tidak sesuai untuk pemeriksaan LED rutin.",a:true,e:"Sampel harus tetap dalam kondisi yang sesuai untuk sedimentasi."},
+{q:"Sampel darah yang telah membeku merupakan sampel ideal untuk LED.",a:false,e:"Sampel harus tetap dalam kondisi yang sesuai untuk sedimentasi."},
+{q:"Homogenisasi membantu mencampurkan darah dan antikoagulan secara merata.",a:true,e:"Pencampuran yang memadai membantu konsistensi sampel."},
+{q:"Sampel darah dan antikoagulan tidak perlu dicampur.",a:false,e:"Pencampuran yang memadai membantu konsistensi sampel."},
+{q:"Fibrinogen dapat meningkatkan pembentukan rouleaux.",a:true,e:"Fibrinogen mendukung agregasi eritrosit."},
+{q:"Fibrinogen selalu menghambat pembentukan rouleaux.",a:false,e:"Fibrinogen mendukung agregasi eritrosit."},
+{q:"Rouleaux menggambarkan susunan eritrosit seperti tumpukan koin.",a:true,e:"Rouleaux adalah agregasi eritrosit menyerupai tumpukan koin."},
+{q:"Rouleaux menggambarkan eritrosit yang terpisah satu sama lain.",a:false,e:"Rouleaux adalah agregasi eritrosit menyerupai tumpukan koin."},
+{q:"Pembentukan rouleaux cenderung mempercepat sedimentasi eritrosit.",a:true,e:"Agregat eritrosit cenderung mengendap lebih cepat."},
+{q:"Pembentukan rouleaux selalu menghentikan sedimentasi eritrosit.",a:false,e:"Agregat eritrosit cenderung mengendap lebih cepat."},
+{q:"LED merupakan penanda inflamasi yang tidak spesifik.",a:true,e:"LED dapat meningkat pada berbagai keadaan."},
+{q:"LED merupakan penanda yang spesifik untuk satu jenis infeksi.",a:false,e:"LED dapat meningkat pada berbagai keadaan."},
+{q:"LED yang meningkat sendiri tidak memastikan satu diagnosis penyakit.",a:true,e:"Interpretasi memerlukan korelasi klinis dan pemeriksaan lain."},
+{q:"LED yang meningkat sendiri memastikan etiologi penyakit tertentu.",a:false,e:"Interpretasi memerlukan korelasi klinis dan pemeriksaan lain."},
+{q:"LED normal tidak secara mutlak menyingkirkan seluruh proses inflamasi.",a:true,e:"LED bukan uji eksklusi mutlak."},
+{q:"LED normal selalu menyingkirkan seluruh proses inflamasi.",a:false,e:"LED bukan uji eksklusi mutlak."},
+{q:"Usia dan jenis kelamin dapat memengaruhi rentang rujukan LED.",a:true,e:"Interpretasi memakai rentang rujukan yang sesuai."},
+{q:"Rentang rujukan LED selalu sama untuk semua usia dan jenis kelamin.",a:false,e:"Interpretasi memakai rentang rujukan yang sesuai."},
+{q:"Nilai rujukan LED dapat berbeda menurut metode pemeriksaan.",a:true,e:"Westergren dan Wintrobe dapat memiliki rentang rujukan berbeda."},
+{q:"Nilai rujukan LED selalu identik pada semua metode.",a:false,e:"Westergren dan Wintrobe dapat memiliki rentang rujukan berbeda."},
+{q:"Anemia dan hematokrit dapat memengaruhi hasil LED.",a:true,e:"Kondisi hematologis memengaruhi karakter sedimentasi."},
+{q:"Anemia dan hematokrit tidak mungkin memengaruhi LED.",a:false,e:"Kondisi hematologis memengaruhi karakter sedimentasi."},
+{q:"Bentuk dan ukuran eritrosit dapat memengaruhi sedimentasi.",a:true,e:"Karakteristik eritrosit merupakan salah satu faktor LED."},
+{q:"Morfologi eritrosit tidak pernah memengaruhi sedimentasi.",a:false,e:"Karakteristik eritrosit merupakan salah satu faktor LED."}
 ];
-let answers=Array(questions.length).fill(null),current=0,started=false,startTime=0,timerId=null,elapsed=0;
+let questions=[];
+
+
+let answers=[],current=0,started=false,startTime=0,timerId=null,questionTimerId=null,questionDeadline=0,advanceLock=false,totalElapsed=0;
 const qText=document.getElementById('questionText'),opts=[...document.querySelectorAll('.tf-options button')];
-function renderQ(){const q=questions[current];document.getElementById('qCounter').textContent='Soal '+(current+1)+' dari '+questions.length;qText.textContent=q.q;document.getElementById('progressBar').style.width=((current+1)/questions.length*100)+'%';opts.forEach(b=>b.classList.toggle('selected',answers[current]=== (b.dataset.answer==='true')));document.getElementById('answerStatus').textContent=answers[current]===null?'Pilih satu jawaban.':'Jawaban tersimpan: '+(answers[current]?'Benar':'Salah');document.getElementById('prevQ').disabled=current===0;document.getElementById('nextQ').textContent=current===questions.length-1?'Selesai & Lihat Nilai':'Berikutnya →';}
-function stopTimer(){if(timerId)clearInterval(timerId);timerId=null}
-function updateTimer(){elapsed=Math.floor((Date.now()-startTime)/1000);const m=String(Math.floor(elapsed/60)).padStart(2,'0'),s=String(elapsed%60).padStart(2,'0');document.getElementById('timerText').textContent=m+':'+s;document.getElementById('timer').style.setProperty('--pct',Math.max(0,100-elapsed/600*100)+'%');document.getElementById('timer').classList.toggle('warn',elapsed>480)}
-function beginQuiz(){answers=Array(questions.length).fill(null);current=0;started=true;startTime=Date.now();document.getElementById('quizResult').classList.add('hidden');document.getElementById('quizStage').classList.remove('hidden');updateTimer();stopTimer();timerId=setInterval(updateTimer,1000);renderQ();if(typeof gtag==='function')gtag('event','quiz_start',{quiz_name:'Hematoimunologi Post-Test'});}
+function shuffleArray(arr){const a=arr.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));const v=a[i];a[i]=a[j];a[j]=v;}return a;}
+function stopQuestionTimer(){if(questionTimerId)clearInterval(questionTimerId);questionTimerId=null;}
+function updateQuestionClock(){if(!started)return;const remain=Math.max(0,questionDeadline-Date.now()),sec=Math.ceil(remain/1000);document.getElementById('questionTimerValue').textContent=String(sec).padStart(2,'0');document.getElementById('questionTimer').style.setProperty('--pct',(remain/15000*100)+'%');document.getElementById('questionTimer').classList.toggle('warn',sec<=5);if(remain<=0){stopQuestionTimer();document.getElementById('answerStatus').textContent='Waktu habis. Soal dilewati.';advanceLock=true;setTimeout(moveNext,400);}}
+function startQuestionClock(){stopQuestionTimer();questionDeadline=Date.now()+15000;updateQuestionClock();questionTimerId=setInterval(updateQuestionClock,100);}
+function renderQ(){const q=questions[current];document.getElementById('qCounter').textContent='Soal '+(current+1)+' dari '+questions.length;qText.textContent=q.q;document.getElementById('progressBar').style.width=((current+1)/questions.length*100)+'%';opts.forEach(b=>{b.disabled=false;b.classList.remove('selected')});document.getElementById('answerStatus').textContent='Pilih BENAR atau SALAH. Jawaban langsung membawa ke soal berikutnya.';advanceLock=false;startQuestionClock();}
+function updateTimer(){totalElapsed=Math.floor((Date.now()-startTime)/1000);const m=String(Math.floor(totalElapsed/60)).padStart(2,'0'),s=String(totalElapsed%60).padStart(2,'0');document.getElementById('timerText').textContent=m+':'+s;document.getElementById('timer').style.setProperty('--pct',(Math.min(100,totalElapsed/600*100))+'%');document.getElementById('timer').classList.toggle('warn',totalElapsed>=480);}
+function beginQuiz(){questions=shuffleArray(questionBank).slice(0,10);answers=Array(questions.length).fill(null);current=0;started=true;startTime=Date.now();totalElapsed=0;advanceLock=false;document.getElementById('quizResult').classList.add('hidden');document.getElementById('quizStage').classList.remove('hidden');stopTimer();updateTimer();timerId=setInterval(updateTimer,1000);renderQ();if(typeof gtag==='function')gtag('event','quiz_start',{quiz_name:'Hematoimunologi Post-Test',question_bank_size:questionBank.length});}
+function stopTimer(){if(timerId)clearInterval(timerId);timerId=null;stopQuestionTimer();}
 document.getElementById('startQuiz').addEventListener('click',beginQuiz);
-opts.forEach(b=>b.addEventListener('click',()=>{if(!started)return;answers[current]=b.dataset.answer==='true';renderQ();if(typeof gtag==='function')gtag('event','quiz_answer',{question_number:current+1,answer:answers[current]?'true':'false'});}));
-document.getElementById('prevQ').addEventListener('click',()=>{if(current>0){current--;renderQ()}});
-document.getElementById('nextQ').addEventListener('click',()=>{if(current<questions.length-1){current++;renderQ()}else finishQuiz()});
-function finishQuiz(){if(!started)return;stopTimer();started=false;const correct=questions.filter((q,i)=>answers[i]===q.a).length,score=correct*10;document.getElementById('quizStage').classList.add('hidden');document.getElementById('quizResult').classList.remove('hidden');document.getElementById('scoreValue').textContent=score;document.getElementById('scoreRing').style.setProperty('--deg',score+'%');document.getElementById('correctNum').textContent=correct;document.getElementById('wrongNum').textContent=10-correct;document.getElementById('totalNum').textContent='10';document.getElementById('resultIcon').textContent=score>=80?'🏆':score>=60?'👏':'📚';document.getElementById('resultTitle').textContent=score>=80?'Sangat baik!':score>=60?'Terus tingkatkan!':'Mari pelajari kembali';document.getElementById('resultText').textContent=(document.getElementById('studentName').value.trim()?document.getElementById('studentName').value.trim()+', ':'')+'Anda menjawab '+correct+' dari 10 soal dengan benar. Nilai dihitung 10 poin untuk setiap jawaban benar.';document.getElementById('answerReview').innerHTML=questions.map((q,i)=>'<article class="review"><h4>Soal '+(i+1)+' · '+(answers[i]===q.a?'✓ Benar':'✕ Salah')+'</h4><p>'+q.q+'</p><p><b>Kunci: '+(q.a?'BENAR':'SALAH')+'</b> — '+q.e+'</p></article>').join('');if(typeof gtag==='function')gtag('event','quiz_complete',{score:score,correct:correct});document.getElementById('quizResult').scrollIntoView({behavior:'smooth',block:'start'});}
+opts.forEach(b=>b.addEventListener('click',()=>{if(!started||advanceLock||answers[current]!==null)return;stopQuestionTimer();answers[current]=b.dataset.answer==='true';opts.forEach(x=>{x.disabled=true;x.classList.toggle('selected',x===b)});document.getElementById('answerStatus').textContent='Jawaban tercatat. Memuat soal berikutnya…';advanceLock=true;if(typeof gtag==='function')gtag('event','quiz_answer',{question_number:current+1,answer:answers[current]?'true':'false'});setTimeout(moveNext,350);}));
+function moveNext(){if(!started)return;if(current<questions.length-1){current++;renderQ();}else finishQuiz();}
+function finishQuiz(){if(!started)return;stopTimer();started=false;const correct=questions.filter((q,i)=>answers[i]===q.a).length,unanswered=answers.filter(x=>x===null).length,wrong=10-correct-unanswered,score=correct*10;document.getElementById('quizStage').classList.add('hidden');document.getElementById('quizResult').classList.remove('hidden');document.getElementById('scoreValue').textContent=score;document.getElementById('scoreRing').style.setProperty('--deg',score+'%');document.getElementById('correctNum').textContent=correct;document.getElementById('wrongNum').textContent=wrong+unanswered;document.getElementById('totalNum').textContent='10';document.getElementById('resultIcon').textContent=score>=80?'🏆':score>=60?'👏':'📚';document.getElementById('resultTitle').textContent=score>=80?'Sangat baik!':score>=60?'Terus tingkatkan!':'Mari pelajari kembali';const name=document.getElementById('studentName').value.trim();document.getElementById('resultText').textContent=(name?name+', ':'')+'Anda menjawab '+correct+' dari 10 soal dengan benar. '+unanswered+' soal tidak dijawab karena waktu habis. Durasi pengerjaan: '+document.getElementById('timerText').textContent+'.';document.getElementById('answerReview').innerHTML=questions.map((q,i)=>'<article class="review"><h4>Soal '+(i+1)+' · '+(answers[i]===null?'Tidak dijawab':answers[i]===q.a?'✓ Benar':'✕ Salah')+'</h4><p>'+q.q+'</p><p><b>Kunci: '+(q.a?'BENAR':'SALAH')+'</b> — '+q.e+'</p></article>').join('');if(typeof gtag==='function')gtag('event','quiz_complete',{score:score,correct:correct,unanswered:unanswered});document.getElementById('quizResult').scrollIntoView({behavior:'smooth',block:'start'});}
 document.getElementById('retryQuiz').addEventListener('click',beginQuiz);
 document.getElementById('printResult').addEventListener('click',()=>window.print());
+
 </script>
 <script>
 const preQuestions=[
